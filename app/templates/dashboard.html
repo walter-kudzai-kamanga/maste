@@ -9,7 +9,7 @@
   <header class="mb-8">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Welcome back, <span x-text="userName">User</span>! 👋</h1>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Welcome back, <span x-text="userName">User</span>!</h1>
         <p class="text-gray-600" x-text="currentDateTime"></p>
       </div>
       <div class="mt-4 md:mt-0 w-full md:w-auto">
@@ -373,13 +373,67 @@
         </div>
       </form>
     </div>
+  
+  <!-- Withdrawal Modal -->
+  <div x-show="showWithdrawModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-gray-900">Withdraw Cash</h3>
+        <button @click="showWithdrawModal = false" class="text-gray-400 hover:text-gray-500">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form @submit.prevent="handleWithdraw" class="space-y-6">
+        <div>
+          <label for="withdrawFromAccount" class="block text-sm font-medium text-gray-700 mb-1">From Account</label>
+          <select id="withdrawFromAccount" x-model="withdrawData.fromAccount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+            <option value="">Select account</option>
+            <option value="checking">Checking •••• 4582</option>
+            <option value="savings">Savings •••• 6721</option>
+          </select>
+        </div>
+        <div>
+          <label for="withdrawAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
+          <div class="mt-1 relative rounded-md shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-500 sm:text-sm">$</span>
+            </div>
+            <input type="number" id="withdrawAmount" x-model="withdrawData.amount" min="0.01" step="0.01" placeholder="0.00" class="w-full pl-7 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Quick Select</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" @click="withdrawData.amount = 20" class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              $20
+            </button>
+            <button type="button" @click="withdrawData.amount = 50" class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              $50
+            </button>
+            <button type="button" @click="withdrawData.amount = 100" class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              $100
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 pt-2">
+          <button type="button" @click="showWithdrawModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            Withdraw
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
 <script>
 function dashboard() {
   return {
-    userName: 'Alex',
+    userName: 'Walter',
     currentDateTime: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
     stats: {
       totalBalance: 125430.50,
@@ -412,6 +466,10 @@ function dashboard() {
       toAccount: '',
       amount: ''
     },
+    withdrawData: {
+      fromAccount: '',
+      amount: ''
+    },
     
     init() {
       // Simulate real-time updates
@@ -440,6 +498,48 @@ function dashboard() {
       // Simulate loading more transactions
       console.log('Loading more transactions...');
       // In a real app, this would make an API call
+    },
+    
+    handleWithdraw() {
+      if (this.withdrawData.fromAccount && this.withdrawData.amount) {
+        // Add the withdrawal as a transaction
+        this.recentTransactions.unshift({
+          id: Date.now(),
+          description: 'Cash Withdrawal',
+          amount: -parseFloat(this.withdrawData.amount),
+          type: 'debit',
+          timestamp: 'Just now',
+          status: 'Completed'
+        });
+        
+        // Update account balance
+        if (this.withdrawData.fromAccount === 'checking') {
+          this.accountData.checking -= parseFloat(this.withdrawData.amount);
+        } else if (this.withdrawData.fromAccount === 'savings') {
+          this.accountData.savings -= parseFloat(this.withdrawData.amount);
+        }
+        this.accountData.total = this.accountData.checking + this.accountData.savings;
+        
+        // Show success message
+        this.notifications.unshift({
+          id: Date.now(),
+          type: 'info',
+          title: 'Withdrawal Successful',
+          message: `You've withdrawn $${parseFloat(this.withdrawData.amount).toFixed(2)} from your ${this.withdrawData.fromAccount} account.`
+        });
+        
+        // Reset form and close modal
+        this.withdrawData = { fromAccount: '', amount: '' };
+        this.showWithdrawModal = false;
+      } else {
+        // Show error message if form is not complete
+        this.notifications.unshift({
+          id: Date.now(),
+          type: 'warning',
+          title: 'Incomplete Form',
+          message: 'Please select an account and enter an amount.'
+        });
+      }
     },
     
     handleTransfer() {

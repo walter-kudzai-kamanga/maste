@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% block title %}Edit Account{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white p-8">
+        <h1 class="text-4xl font-bold mb-2">Edit Account</h1>
+        <p class="text-blue-100 text-xl">Account Number: {{ account.account_number }}</p>
+      </div>
+      
+      <div class="p-8">
+      
+      <form id="editAccountForm" class="p-8 space-y-8">
+        <!-- Account Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <!-- Account Number -->
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+            <label class="block text-sm font-semibold text-blue-800 mb-2">Account Number</label>
+            <div class="text-xl font-mono font-bold text-blue-900">
+              {{ account.account_number }}
+            </div>
+          </div>
+
+          <!-- Customer -->
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+            <label class="block text-sm font-semibold text-green-800 mb-2">Customer</label>
+            <div class="text-lg font-semibold text-green-900">
+              {{ account.customer.name if account.customer else 'Unknown Customer' }}
+            </div>
+            <div class="text-sm text-green-600">
+              {{ account.customer.email if account.customer else 'No email' }}
+            </div>
+          </div>
+
+          <!-- Current Balance -->
+          <div class="bg-gradient-to-r from-purple-50 to-violet-50 border-2 border-purple-200 rounded-xl p-6">
+            <label class="block text-sm font-semibold text-purple-800 mb-2">Current Balance</label>
+            <div class="text-2xl font-bold text-purple-900">
+              {{ account.currency }} {{ "%.2f"|format(account.balance) }}
+            </div>
+            <div class="text-sm text-purple-600">
+              Available: {{ "%.2f"|format(account.available_balance) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label for="account_type" class="block text-sm font-semibold text-gray-700 mb-3">Account Type *</label>
+            <select id="account_type" name="account_type" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium">
+              <option value="CHECKING" {% if account.account_type == 'CHECKING' %}selected{% endif %}>Checking Account</option>
+              <option value="SAVINGS" {% if account.account_type == 'SAVINGS' %}selected{% endif %}>Savings Account</option>
+              <option value="BUSINESS" {% if account.account_type == 'BUSINESS' %}selected{% endif %}>Business Account</option>
+              <option value="INVESTMENT" {% if account.account_type == 'INVESTMENT' %}selected{% endif %}>Investment Account</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="status" class="block text-sm font-semibold text-gray-700 mb-3">Account Status *</label>
+            <select id="status" name="status" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium">
+              <option value="ACTIVE" {% if account.status == 'ACTIVE' %}selected{% endif %}>Active</option>
+              <option value="INACTIVE" {% if account.status == 'INACTIVE' %}selected{% endif %}>Inactive</option>
+              <option value="SUSPENDED" {% if account.status == 'SUSPENDED' %}selected{% endif %}>Suspended</option>
+              <option value="CLOSED" {% if account.status == 'CLOSED' %}selected{% endif %}>Closed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label for="currency" class="block text-sm font-semibold text-gray-700 mb-3">Currency *</label>
+            <select id="currency" name="currency" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium">
+              <option value="USD" {% if account.currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+              <option value="EUR" {% if account.currency == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+              <option value="GBP" {% if account.currency == 'GBP' %}selected{% endif %}>GBP - British Pound</option>
+              <option value="KES" {% if account.currency == 'KES' %}selected{% endif %}>KES - Kenyan Shilling</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="branch_code" class="block text-sm font-semibold text-gray-700 mb-3">Branch Code</label>
+            <input type="text" id="branch_code" name="branch_code" value="{{ account.branch_code or '' }}" 
+                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                   placeholder="Branch identifier">
+          </div>
+        </div>
+        
+        <!-- Account Limits -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-6 mb-8">
+          <h2 class="text-xl font-bold text-amber-900 mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+            Account Limits & Security
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label for="daily_limit" class="block text-sm font-semibold text-amber-800 mb-3">Daily Transaction Limit</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-600 font-semibold">{{ account.currency }}</span>
+                <input type="number" id="daily_limit" name="daily_limit" value="{{ account.daily_limit }}" step="0.01" 
+                       class="w-full pl-12 pr-4 py-3 border-2 border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 font-semibold text-amber-900">
+              </div>
+            </div>
+            
+            <div>
+              <label for="monthly_limit" class="block text-sm font-semibold text-amber-800 mb-3">Monthly Transaction Limit</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-600 font-semibold">{{ account.currency }}</span>
+                <input type="number" id="monthly_limit" name="monthly_limit" value="{{ account.monthly_limit }}" step="0.01" 
+                       class="w-full pl-12 pr-4 py-3 border-2 border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 font-semibold text-amber-900">
+              </div>
+            </div>
+            
+            <div>
+              <label for="single_transaction_limit" class="block text-sm font-semibold text-amber-800 mb-3">Single Transaction Limit</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-600 font-semibold">{{ account.currency }}</span>
+                <input type="number" id="single_transaction_limit" name="single_transaction_limit" value="{{ account.single_transaction_limit }}" step="0.01" 
+                       class="w-full pl-12 pr-4 py-3 border-2 border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 font-semibold text-amber-900">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Additional Information -->
+        <div class="bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-200 rounded-xl p-6 mb-8">
+          <h2 class="text-xl font-bold text-teal-900 mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Additional Details
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="description" class="block text-sm font-semibold text-teal-800 mb-3">Account Description</label>
+              <textarea id="description" name="description" rows="4" 
+                        class="w-full px-4 py-3 border-2 border-teal-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 font-medium"
+                        placeholder="Enter account description...">{{ account.description or '' }}</textarea>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-teal-800 mb-2">Account Created</label>
+                <div class="bg-teal-100 border border-teal-300 rounded-lg px-4 py-3 font-mono text-teal-900">
+                  {{ account.created_at.strftime('%Y-%m-%d %H:%M:%S') if account.created_at else 'N/A' }}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-semibold text-teal-800 mb-2">Last Updated</label>
+                <div class="bg-teal-100 border border-teal-300 rounded-lg px-4 py-3 font-mono text-teal-900">
+                  {{ account.updated_at.strftime('%Y-%m-%d %H:%M:%S') if account.updated_at else 'N/A' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Account History -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-gray-800 mb-2">Account History</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-600">Created:</span>
+              <span class="font-medium">{{ account.created_at }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600">Last Updated:</span>
+              <span class="font-medium">{{ account.updated_at or 'Never' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-4 pt-8 border-t-2 border-gray-200">
+          <button type="button" onclick="window.location.href='/accounts'" 
+                  class="px-8 py-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Cancel
+          </button>
+          <button type="submit" 
+                  class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Save Changes
+          </button>
+          <button type="button" onclick="deleteAccount('{{ account.id }}')" 
+                  class="px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Delete Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('editAccountForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  
+  try {
+    const response = await fetch('/api/accounts/{{ account.id }}/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      alert('Account updated successfully!');
+      window.location.href = '/accounts';
+    } else {
+      const error = await response.json();
+      alert('Error updating account: ' + (error.detail || 'Unknown error'));
+    }
+  } catch (error) {
+    alert('Network error: ' + error.message);
+  }
+});
+
+async function deleteAccount(accountId) {
+  if (confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+    try {
+      const response = await fetch('/api/accounts/' + accountId + '/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        alert('Account deleted successfully!');
+        window.location.href = '/accounts';
+      } else {
+        const error = await response.json();
+        alert('Error deleting account: ' + (error.detail || 'Unknown error'));
+      }
+    } catch (error) {
+      alert('Network error: ' + error.message);
+    }
+  }
+}
+</script>
+{% endblock %}

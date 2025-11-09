@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <title>{% block title %}Banking System{% endblock %}</title>
+  <style>
+    .card-hover {
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-gradient:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    .table-row-hover:hover {
+      background-color: #f8fafc;
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .card-shadow:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <!-- Enhanced Navigation -->
+  <nav class="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-4">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+              <i class="fas fa-university text-blue-600 text-lg"></i>
+            </div>
+          </div>
+          <div class="text-white font-bold text-xl">SecureBank Pro</div>
+        </div>
+        
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-1">
+            <a href="/" class="text-white bg-blue-500 bg-opacity-30 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+            </a>
+            <a href="/accounts" class="text-blue-100 hover:bg-blue-500 hover:bg-opacity-30 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-users mr-2"></i>Accounts
+            </a>
+            <a href="/transactions" class="text-blue-100 hover:bg-blue-500 hover:bg-opacity-30 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-exchange-alt mr-2"></i>Transactions
+            </a>
+            <a href="/reconciliation" class="text-blue-100 hover:bg-blue-500 hover:bg-opacity-30 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-balance-scale mr-2"></i>Reconciliation
+            </a>
+            <a href="/mobile-money" class="text-blue-100 hover:bg-blue-500 hover:bg-opacity-30 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
+              <i class="fas fa-mobile-alt mr-2"></i>Mobile Money
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <button class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-400 transition-colors duration-200">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full pulse"></div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-user text-white text-sm"></i>
+            </div>
+            <span class="text-white text-sm font-medium">John Doe</span>
+            <button class="bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center">
+              <i class="fas fa-sign-out-alt mr-1"></i>Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-12">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">SecureBank Pro</h3>
+          <p class="text-gray-400 text-sm">Your trusted banking partner for secure and efficient financial services.</p>
+        </div>
+        <div>
+          <h4 class="text-md font-semibold mb-4">Services</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Online Banking</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Mobile Banking</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Investment Services</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-md font-semibold mb-4">Support</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Help Center</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Contact Us</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Security</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-md font-semibold mb-4">Connect</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 SecureBank Pro. All rights reserved. | FDIC Insured | Equal Housing Lender</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

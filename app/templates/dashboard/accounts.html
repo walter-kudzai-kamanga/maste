@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+
+{% block title %}Accounts Dashboard - Banking System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">
+        <i class="fas fa-users text-primary"></i> Accounts Management
+    </h1>
+    <button class="btn btn-primary" onclick="showCreateAccountModal()">
+        <i class="fas fa-plus"></i> New Account
+    </button>
+</div>
+
+<!-- Filters and Search -->
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search by name, account number, or email...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="accountTypeFilter">
+                    <option value="">All Account Types</option>
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                    <option value="business">Business</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="frozen">Frozen</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" onclick="applyFilters()">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Accounts</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalAccounts">0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active Accounts</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="activeAccounts">0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-user-check fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Inactive Accounts</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="inactiveAccounts">0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-user-times fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">New Accounts (30d)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="newAccounts">0</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-user-plus fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accounts Table -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">All Accounts</h6>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown">
+                Bulk Actions
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="performBulkAction('activate')">Activate Selected</a></li>
+                <li><a class="dropdown-item" href="#" onclick="performBulkAction('deactivate')">Deactivate Selected</a></li>
+                <li><a class="dropdown-item" href="#" onclick="performBulkAction('freeze')">Freeze Selected</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="#" onclick="performBulkAction('delete')">Delete Selected</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="accountsTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAllCheckbox"></th>
+                        <th>Account Number</th>
+                        <th>Holder Name</th>
+                        <th>Email</th>
+                        <th>Type</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsTableBody">
+                    <!-- Data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadAccountsData();
+    loadSummaryData();
+
+    document.getElementById('selectAllCheckbox').addEventListener('change', function(e) {
+        document.querySelectorAll('#accountsTableBody input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = e.target.checked;
+        });
+    });
+});
+
+async function loadAccountsData(filters = {}) {
+    try {
+        const params = new URLSearchParams(filters).toString();
+        const response = await apiCall(`/accounts?${params}`);
+        const accounts = response.data;
+
+        const tbody = document.getElementById('accountsTableBody');
+        tbody.innerHTML = '';
+
+        accounts.forEach(account => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" class="account-checkbox" value="${account.id}"></td>
+                <td>${account.account_number}</td>
+                <td>${account.holder_name}</td>
+                <td>${account.email}</td>
+                <td><span class="badge bg-info">${account.type}</span></td>
+                <td>${formatCurrency(account.balance)}</td>
+                <td><span class="badge bg-${getStatusColor(account.status)}">${account.status}</span></td>
+                <td>${formatDateTime(account.created_at)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewAccount(${account.id})"><i class="fas fa-eye"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="editAccount(${account.id})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteAccount(${account.id})"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        if (!$.fn.DataTable.isDataTable('#accountsTable')) {
+            $('#accountsTable').DataTable({
+                pageLength: 25,
+                responsive: true,
+                order: [[7, 'desc']]
+            });
+        }
+
+    } catch (error) {
+        console.error('Failed to load accounts:', error);
+        showToast('Failed to load accounts', 'error');
+    }
+}
+
+async function loadSummaryData() {
+    try {
+        const response = await apiCall('/accounts/summary');
+        const summary = response.data;
+
+        document.getElementById('totalAccounts').textContent = formatNumber(summary.total);
+        document.getElementById('activeAccounts').textContent = formatNumber(summary.active);
+        document.getElementById('inactiveAccounts').textContent = formatNumber(summary.inactive);
+        document.getElementById('newAccounts').textContent = formatNumber(summary.new_30d);
+
+    } catch (error) {
+        console.error('Failed to load summary data:', error);
+    }
+}
+
+function applyFilters() {
+    const filters = {
+        search: document.getElementById('searchInput').value,
+        type: document.getElementById('accountTypeFilter').value,
+        status: document.getElementById('statusFilter').value
+    };
+    loadAccountsData(filters);
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'active': 'success',
+        'inactive': 'secondary',
+        'frozen': 'warning',
+        'closed': 'danger'
+    };
+    return colors[status] || 'dark';
+}
+
+function showCreateAccountModal() {
+    const modalId = showModal({
+        title: 'Create New Account',
+        content: `
+            <form id="createAccountForm" data-ajax="true" action="/api/v1/accounts" method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone">Phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="account_type">Account Type</label>
+                        <select class="form-select" id="account_type" name="account_type" required>
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
+                            <option value="business">Business</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="initial_deposit">Initial Deposit</label>
+                        <input type="number" class="form-control" id="initial_deposit" name="initial_deposit" value="0" step="0.01">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="address">Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+                </div>
+            </form>
+        `,
+        footer: `
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="createAccountForm" class="btn btn-primary">Create Account</button>
+        `
+    });
+}
+
+async function viewAccount(id) {
+    try {
+        const response = await apiCall(`/accounts/${id}`);
+        const account = response.data;
+
+        const modalId = showModal({
+            title: `Account Details - ${account.account_number}`,
+            content: `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Holder:</strong> ${account.holder_name}</p>
+                        <p><strong>Email:</strong> ${account.email}</p>
+                        <p><strong>Phone:</strong> ${account.phone || 'N/A'}</p>
+                        <p><strong>Address:</strong> ${account.address || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Type:</strong> <span class="badge bg-info">${account.type}</span></p>
+                        <p><strong>Balance:</strong> <span class="h5">${formatCurrency(account.balance)}</span></p>
+                        <p><strong>Status:</strong> <span class="badge bg-${getStatusColor(account.status)}">${account.status}</span></p>
+                        <p><strong>Created At:</strong> ${formatDateTime(account.created_at)}</p>
+                    </div>
+                </div>
+                <hr>
+                <h5>Recent Transactions</h5>
+                <div id="recentTransactionsForAccount" class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Transactions will be loaded here -->
+                </div>
+            `,
+            footer: `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>`
+        });
+
+        // Load recent transactions for this account
+        const transactionsResponse = await apiCall(`/accounts/${id}/transactions`);
+        const transactions = transactionsResponse.data;
+        const container = document.getElementById('recentTransactionsForAccount');
+        if (transactions.length > 0) {
+            let table = '<table class="table table-sm table-striped"><thead><tr><th>ID</th><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody>';
+            transactions.forEach(tx => {
+                table += `<tr><td>${tx.id}</td><td>${tx.type}</td><td>${formatCurrency(tx.amount)}</td><td>${formatDateTime(tx.created_at)}</td></tr>`;
+            });
+            table += '</tbody></table>';
+            container.innerHTML = table;
+        } else {
+            container.innerHTML = '<p class="text-muted">No recent transactions.</p>';
+        }
+
+    } catch (error) {
+        console.error(`Failed to load account ${id}:`, error);
+        showToast('Failed to load account details', 'error');
+    }
+}
+
+function editAccount(id) {
+    // This would typically redirect to a dedicated edit page or open a more complex modal
+    window.location.href = `/accounts/${id}/edit`;
+}
+
+async function deleteAccount(id) {
+    showConfirmationModal('Are you sure you want to delete this account? This action cannot be undone.', async () => {
+        try {
+            await apiCall(`/accounts/${id}`, { method: 'DELETE' });
+            showToast('Account deleted successfully', 'success');
+            loadAccountsData();
+            loadSummaryData();
+        } catch (error) {
+            console.error(`Failed to delete account ${id}:`, error);
+            showToast('Failed to delete account', 'error');
+        }
+    });
+}
+
+async function performBulkAction(action) {
+    const selectedIds = Array.from(document.querySelectorAll('.account-checkbox:checked')).map(cb => cb.value);
+
+    if (selectedIds.length === 0) {
+        showToast('Please select at least one account.', 'warning');
+        return;
+    }
+
+    const actionText = action.charAt(0).toUpperCase() + action.slice(1);
+    showConfirmationModal(`Are you sure you want to ${action} ${selectedIds.length} selected accounts?`, async () => {
+        try {
+            await apiCall('/accounts/bulk-action', {
+                method: 'POST',
+                body: JSON.stringify({ action, ids: selectedIds })
+            });
+            showToast(`Successfully performed bulk action: ${actionText}`, 'success');
+            loadAccountsData();
+            loadSummaryData();
+        } catch (error) {
+            console.error(`Failed to perform bulk action '${action}':`, error);
+            showToast(`Failed to ${action} accounts`, 'error');
+        }
+    });
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Transactions</h1>
+  
+  <!-- Transactions Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+      <h2 class="text-lg font-semibold text-gray-600">Total Transactions (Month)</h2>
+      <p class="text-4xl font-bold text-blue-600 mt-2">{{ transactions|length }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+      <h2 class="text-lg font-semibold text-gray-600">Total Volume (Month)</h2>
+      <p class="text-4xl font-bold text-green-600 mt-2">${{ transactions|sum(attribute='amount') }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+      <h2 class="text-lg font-semibold text-gray-600">Fraudulent Transactions</h2>
+      <p class="text-4xl font-bold text-red-600 mt-2">0</p>
+    </div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-xl font-bold text-gray-900">All Transactions</h2>
+      <div>
+        <input type="text" placeholder="Search transactions..." class="px-4 py-2 border rounded-lg">
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 ml-2">
+          <i class="fas fa-search mr-2"></i>Search
+        </button>
+      </div>
+    </div>
+    <div class="p-6">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for transaction in transactions %}
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">{{ transaction.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ transaction.created_at.strftime('%Y-%m-%d') }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ transaction.description }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-{{ 'green' if transaction.transaction_type == 'CREDIT' else 'red' }}-600">{{ '+' if transaction.transaction_type == 'CREDIT' else '-' }}${{ "%.2f"|format(transaction.amount) }}</td>
+            <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ 'green' if transaction.status == 'COMPLETED' else 'yellow' }}-100 text-{{ 'green' if transaction.status == 'COMPLETED' else 'yellow' }}-800">{{ transaction.status.value }}</span></td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <a href="#" class="text-blue-600 hover:text-blue-900">Details</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

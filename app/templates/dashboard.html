@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block title %}Banking Dashboard - Overview{% endblock %}
+
+{% block content %}
+<!-- Professional Banking Dashboard -->
+<div x-data="dashboard()" x-init="init()" class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  
+  <!-- Header Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Balance Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Balance</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">$<span x-text="formatCurrency(stats.totalBalance)">0</span></p>
+          <p class="text-sm text-green-600 mt-2 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+            </svg>
+            +12.5% from last month
+          </p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-full">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Accounts Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Active Accounts</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2" x-text="stats.activeAccounts">0</p>
+          <p class="text-sm text-green-600 mt-2 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+            </svg>
+            +5 new this week
+          </p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-full">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions Today Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Today's Transactions</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2" x-text="stats.todayTransactions">0</p>
+          <p class="text-sm text-blue-600 mt-2 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+            </svg>
+            Processing normally
+          </p>
+        </div>
+        <div class="p-3 bg-purple-100 rounded-full">
+          <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">System Health</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2" x-text="stats.systemHealth + '%'">0%</p>
+          <p class="text-sm text-green-600 mt-2 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            All systems operational
+          </p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-full">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Recent Transactions -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-900">Recent Transactions</h2>
+            <button @click="refreshTransactions()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <template x-for="transaction in recentTransactions" :key="transaction.id">
+              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <div class="flex items-center space-x-4">
+                  <div :class="transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'" class="p-2 rounded-full">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path x-show="transaction.type === 'credit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                      <path x-show="transaction.type === 'debit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900" x-text="transaction.description"></p>
+                    <p class="text-sm text-gray-500" x-text="transaction.timestamp"></p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p :class="transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'" class="font-bold" x-text="formatCurrency(transaction.amount)"></p>
+                  <p class="text-sm text-gray-500" x-text="transaction.status"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-bold text-gray-900">Quick Actions</h3>
+        </div>
+        <div class="p-6 space-y-3">
+          <button @click="showTransferModal = true" class="w-full flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-blue-600 rounded-full">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">Transfer Money</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button @click="showDepositModal = true" class="w-full flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-green-600 rounded-full">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">Deposit Funds</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button @click="showWithdrawModal = true" class="w-full flex items-center justify-between p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-red-600 rounded-full">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">Withdraw Cash</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button @click="showStatementModal = true" class="w-full flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-purple-600 rounded-full">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">View Statement</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <a href="/ledger" class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-gray-600 rounded-full">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9 6 9-6"/>
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">Ledger</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Account Overview -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-bold text-gray-900">Account Overview</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Checking Account</span>
+              <span class="font-bold text-gray-900" x-text="formatCurrency(accountData.checking)">$0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Savings Account</span>
+              <span class="font-bold text-gray-900" x-text="formatCurrency(accountData.savings)">$0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Credit Available</span>
+              <span class="font-bold text-gray-900" x-text="formatCurrency(accountData.credit)">$0</span>
+            </div>
+            <div class="pt-4 border-t border-gray-200">
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-900">Total Assets</span>
+                <span class="font-bold text-xl text-green-600" x-text="formatCurrency(accountData.total)">$0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-bold text-gray-900">Notifications</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-3">
+            <template x-for="notification in notifications" :key="notification.id">
+              <div class="flex items-start space-x-3 p-3 rounded-lg" :class="notification.type === 'info' ? 'bg-blue-50' : notification.type === 'warning' ? 'bg-yellow-50' : 'bg-red-50'">
+                <div :class="notification.type === 'info' ? 'bg-blue-600' : notification.type === 'warning' ? 'bg-yellow-600' : 'bg-red-600'" class="p-1 rounded-full mt-1">
+                  <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-900" x-text="notification.title"></p>
+                  <p class="text-sm text-gray-600" x-text="notification.message"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div x-show="showTransferModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Transfer Money</h3>
+      <form @submit.prevent="handleTransfer()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">From Account</label>
+          <select x-model="transferData.fromAccount" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Select Account</option>
+            <option value="checking">Checking Account</option>
+            <option value="savings">Savings Account</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">To Account</label>
+          <input x-model="transferData.toAccount" type="text" placeholder="Enter account number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+          <input x-model="transferData.amount" type="number" placeholder="0.00" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div class="flex space-x-3 pt-4">
+          <button type="button" @click="showTransferModal = false" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+            Transfer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function dashboard() {
+  return {
+    stats: {
+      totalBalance: 125430.50,
+      activeAccounts: 2847,
+      todayTransactions: 156,
+      systemHealth: 99.9
+    },
+    accountData: {
+      checking: 45230.25,
+      savings: 78200.15,
+      credit: 15000.00,
+      total: 123430.40
+    },
+    recentTransactions: [
+      { id: 1, description: 'Salary Deposit', amount: 3500.00, type: 'credit', timestamp: '2 hours ago', status: 'Completed' },
+      { id: 2, description: 'Grocery Store', amount: -125.50, type: 'debit', timestamp: '3 hours ago', status: 'Completed' },
+      { id: 3, description: 'Utility Payment', amount: -89.75, type: 'debit', timestamp: '1 day ago', status: 'Completed' },
+      { id: 4, description: 'Online Transfer', amount: -500.00, type: 'debit', timestamp: '2 days ago', status: 'Pending' }
+    ],
+    notifications: [
+      { id: 1, type: 'info', title: 'New Feature Available', message: 'Mobile check deposit is now available in your app' },
+      { id: 2, type: 'warning', title: 'Security Alert', message: 'Unusual login activity detected on your account' }
+    ],
+    showTransferModal: false,
+    showDepositModal: false,
+    showWithdrawModal: false,
+    showStatementModal: false,
+    transferData: {
+      fromAccount: '',
+      toAccount: '',
+      amount: ''
+    },
+    
+    init() {
+      // Simulate real-time updates
+      setInterval(() => {
+        this.updateStats();
+      }, 5000);
+    },
+    
+    formatCurrency(amount) {
+      return Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
+    
+    updateStats() {
+      // Simulate small changes in stats
+      this.stats.todayTransactions += Math.floor(Math.random() * 3) - 1;
+      this.stats.systemHealth = 99.5 + Math.random() * 0.5;
+    },
+    
+    refreshTransactions() {
+      // Simulate refreshing transactions
+      console.log('Refreshing transactions...');
+      // In a real app, this would make an API call
+    },
+    
+    handleTransfer() {
+      if (this.transferData.fromAccount && this.transferData.toAccount && this.transferData.amount) {
+        alert(`Transfer of $${this.transferData.amount} from ${this.transferData.fromAccount} to ${this.transferData.toAccount} initiated!`);
+        this.showTransferModal = false;
+        this.transferData = { fromAccount: '', toAccount: '', amount: '' };
+      } else {
+        alert('Please fill in all fields');
+      }
+    }
+  }
+}
+</script>
+{% endblock %}
